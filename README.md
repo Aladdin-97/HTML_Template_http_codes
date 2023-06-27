@@ -1,9 +1,3 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-
 <br />
 <p align="center">
   <a href="https://github.com/PecceG2/HTML_Template_http_codes">
@@ -17,25 +11,11 @@
 	<br />
 	Change default nginx/apache templates for a responsive and more attractive design
     <br />
-    <a href="https://github.com/PecceG2/"><strong>View all my projects »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/PecceG2/HTML_Template_http_codes/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/PecceG2/HTML_Template_http_codes/blob/master/LICENSE.md">View License</a>
-    ·
-    <a href="https://github.com/PecceG2/HTML_Template_http_codes/issues">Request Feature</a>
-  </p>
 </p>
 
 ## Screenshots ##
 ![Screenshot](https://pecceg2.github.io/HTTP_Console_HTML_Template/readme-banner.png)
 
-## Templates demo ##
-* [HTTP404](https://pecceg2.github.io/HTTP_Console_HTML_Template/404/)
-* [HTTP500](https://pecceg2.github.io/HTTP_Console_HTML_Template/500/)
-* [HTTP503](https://pecceg2.github.io/HTTP_Console_HTML_Template/503/)
-* [HTTP504](https://pecceg2.github.io/HTTP_Console_HTML_Template/504/)
 
 ## Usage ##
 Just clone/download the git repository (The html files are included on error number folder, example "500/index.html" for 500 Internal Server Error)
@@ -46,30 +26,57 @@ Just clone/download the git repository (The html files are included on error num
 
 File: [`nginx.conf`](https://www.nginx.com/resources/wiki/start/topics/examples/full/) (/etc/nginx/)
 
-Example - assumes HttpErrorPages are located into `/var/html/www/ErrorPages`.
+Example - assumes HttpErrorPages are located into `/usr/share/nginx/html/`.
 
 ```nginx
 server {
-    listen      80;
-    server_name localhost;
-    root        /var/html/www;
-    index       index.html;
+    listen 8000;
+    server_name fe;
+
+    try_files $uri $uri/ =404;
     
-    location / {
-        try_files $uri $uri/ =404;
-        
-        # add one directive for each http status code
-        error_page 404 /ErrorPages/404/index.html;
-        error_page 500 /ErrorPages/500/index.html;
-        error_page 503 /ErrorPages/503/index.html;
-		error_page 503 /ErrorPages/504/index.html;
+    # add one directive for each http status code
+    error_page 401 /ErrorPages/401/index.html;
+    error_page 403 /ErrorPages/403/index.html;
+    error_page 404 /ErrorPages/404/index.html;
+    error_page 500 /ErrorPages/500/index.html;
+    error_page 503 /ErrorPages/503/index.html;
+    error_page 504 /ErrorPages/504/index.html;
+
+    # custom location for static files
+    location ~* \.(js|jpg|png|css)$ {
+        root /usr/share/nginx/html/custom_sources/;
+        expires 30d;
     }
+
+    # test error pages    
+    location /throw401 {
+        return 401;
+    }
+    location /throw500 {
+        return 500;
+    }
+    location /throw403 {
+        return 403;
+    }
+    location /throw404 {
+        return 404;
+    }
+
+    location /throw503 {
+        return 503;
+    }
+    location /throw504 {
+        return 504;
+    }
+
 
     # redirect the virtual ErrorPages path the real path
     location /ErrorPages/ {
-        alias /var/html/www/ErrorPages/;
+        alias /usr/share/nginx/html/;
         internal;
     }
+}
 ```
 
 ## Apache Httpd Integration ##
@@ -90,14 +97,3 @@ ErrorDocument 504 /ErrorPages/504/index.html
 >You can check out the full license [here](https://github.com/PecceG2/HTML_Template_http_codes/blob/master/LICENSE.md)
 
 This project is licensed under the terms of the **MIT** license.
-
-[contributors-shield]: https://img.shields.io/github/contributors/PecceG2/HTML_Template_http_codes.svg?style=flat-square
-[contributors-url]: https://github.com/PecceG2/HTML_Template_http_codes/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/PecceG2/HTML_Template_http_codes.svg?style=flat-square
-[forks-url]: https://github.com/PecceG2/HTML_Template_http_codes/network/members
-[stars-shield]: https://img.shields.io/github/stars/PecceG2/HTML_Template_http_codes.svg?style=flat-square
-[stars-url]: https://github.com/PecceG2/HTML_Template_http_codes/stargazers
-[issues-shield]: https://img.shields.io/github/issues/PecceG2/HTML_Template_http_codes.svg?style=flat-square
-[issues-url]: https://github.com/PecceG2/HTML_Template_http_codes/issues
-[license-shield]: https://img.shields.io/github/license/PecceG2/HTML_Template_http_codes.svg?style=flat-square
-[license-url]: https://github.com/PecceG2/HTML_Template_http_codes/blob/master/LICENSE.md
